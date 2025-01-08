@@ -6,3 +6,5 @@ tags:
 # Privae
 
 I'm a note, tagged as private.
+
+![[excluded.png]]
