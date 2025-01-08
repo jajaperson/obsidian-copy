@@ -3,8 +3,9 @@
 _Obsidan Copy is a CLI program and Rust library to copy part of an [Obsidian](https://obsidian.md)
 vault to an external directory_
 
-Note this differs from [obsidian-export](https://github.com/zoni/obsidian-export), which exports
-some or all of a vault to [CommonMark](https://commonmark.org).
+Parts of this project are based on the distinct
+[obsidian-export](https://github.com/zoni/obsidian-export), which exports some or all of a vault to
+[CommonMark](https://commonmark.org).
 
 ## Rationale
 

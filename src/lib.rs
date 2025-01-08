@@ -3,7 +3,7 @@ mod references;
 
 use std::{
     collections::HashSet,
-    ffi::OsString,
+    ffi::{OsStr, OsString},
     fs,
     path::{Path, PathBuf},
 };
@@ -32,6 +32,13 @@ pub enum CopyError {
     CopyError {
         from: PathBuf,
         to: PathBuf,
+        source: std::io::Error,
+    },
+
+    #[snafu(display("failed to create directory at `{}`", path.display()))]
+    /// This occurs when creating a directory fails.
+    CreateDirError {
+        path: PathBuf,
         source: std::io::Error,
     },
 
@@ -241,6 +248,13 @@ impl Copier {
             .file
             .and_then(|filename| lookup_filename_in_vault(filename, &self.vault_contents))
             .cloned()
+            .filter(|file| {
+                let is_markdown = file
+                    .extension()
+                    .and_then(OsStr::to_str)
+                    .map_or(true, |ext| ext != "md");
+                is_markdown
+            })
     }
 
     pub fn copy(self) -> Result<()> {
@@ -250,6 +264,9 @@ impl Copier {
                 .expect("walked files should be nested under root")
                 .to_path_buf();
             let destination = &self.destination.join(relative_path);
+            if let Some(dir) = destination.parent() {
+                fs::create_dir_all(dir).context(CreateDirSnafu { path: dir })?;
+            }
             fs::copy(&file, destination).context(CopySnafu {
                 from: file,
                 to: destination,
