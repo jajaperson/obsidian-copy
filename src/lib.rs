@@ -92,13 +92,13 @@ impl Copier {
     }
 
     /// Add tags to be included.
-    pub fn include_tags(&mut self, tags: Vec<String>) -> &mut Self {
+    pub fn include_tags<T: IntoIterator<Item = String>>(&mut self, tags: T) -> &mut Self {
         self.include_tags.extend(tags);
         self
     }
 
     /// Add tags to be excluded.
-    pub fn exclude_tags(&mut self, tags: Vec<String>) -> &mut Self {
+    pub fn exclude_tags<T: IntoIterator<Item = String>>(&mut self, tags: T) -> &mut Self {
         self.exclude_tags.extend(tags);
         self
     }
@@ -236,8 +236,8 @@ impl Copier {
             && !tags.iter().any(|tag| self.exclude_tags.contains(tag));
 
         if include {
-            self.to_copy.insert(src);
-            self.to_copy.extend(found_attachments);
+            self.add_file(src);
+            self.add_files(found_attachments);
         }
 
         Ok(())
@@ -257,6 +257,21 @@ impl Copier {
             })
     }
 
+    /// Manually add a file to be copied.
+    ///
+    /// You'll need to ensure this actually exists.
+    pub fn add_file(&mut self, src: PathBuf) {
+        self.to_copy.insert(src);
+    }
+
+    /// Manually add multiple files to be copied.
+    ///
+    /// You'll need to ensure these actually exist.
+    pub fn add_files<T: IntoIterator<Item = PathBuf>>(&mut self, src: T) {
+        self.to_copy.extend(src);
+    }
+
+    /// Copy selected files to destination.
     pub fn copy(self) -> Result<()> {
         for file in self.to_copy {
             let relative_path = file
