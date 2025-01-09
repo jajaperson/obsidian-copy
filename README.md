@@ -14,3 +14,13 @@ everything facilitates richer link-making acros disciplines and topics. The only
 approach is sharing one's vault becomes exceedingly difficult: Mathematical results are jumbled
 with recipes and diary entries I'd rather the world didn't see. Obsidian Copy aims to solve this
 problem, by selectively copying a part of a vault based on filters, such as tags.
+
+## How it works
+
+I'm not ready to release this yet and the functionality is subject to change. Currently this only
+supports filtering by tags for `.md` files. Any other files are included iff they are linked to (or
+embedded) by an included `.md` file. Basic usage is as follows
+
+```
+obsidian-export --root Vault -destination Export --include-tags public --exclude-tags private
+```
